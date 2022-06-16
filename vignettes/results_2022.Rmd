@@ -1,0 +1,36 @@
+---
+title: "Results 2022"
+author: "Michael Rustler"
+date: "`r Sys.date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Results 2022}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Men 
+
+```{r men}
+men <- teamstaffel::get_results("M")
+DT::datatable(men)
+
+```
+
+# Women
+
+```{r women}
+women <- teamstaffel::get_results("W")
+DT::datatable(women)
+
+```
+
+
+)

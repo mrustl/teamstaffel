@@ -1,0 +1,31 @@
+Package: teamstaffel
+Title: R Package for Visualising Results from BWB Teamstaffel
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Michael", "Rustler", , "michael@rustler.me", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-0647-7726")),
+    person("Michael Rustler", role = "cph")
+  )
+Description: R Package for Visualising Results from BWB Teamstaffel.
+License: MIT + file LICENSE
+URL: https://github.com/KWB-R/teamstaffel
+BugReports: https://github.com/KWB-R/teamstaffel/issues
+Imports: 
+    dplyr,
+    httr,
+    lubridate,
+    magrittr,
+    rvest,
+    stringr,
+    tibble
+Suggests: 
+    covr,
+    DT,
+    knitr,
+    rmarkdown
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.0
