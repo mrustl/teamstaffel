@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 ## Men All
 
 ```{r men_all}
-men <- teamstaffel::get_results("M")
+men <- teamstaffel::get_results("M", year = 2019)
 DT::datatable(men,
               rownames = FALSE)
 
@@ -32,7 +32,7 @@ DT::datatable(men,
 ```{r men_bwb_only}
 is_bwb <- grepl(men$team, pattern = "Berliner\\s?Wasserbetriebe")
 men_bwb <- men[is_bwb, ] 
-men_bwb$place_bwb <- 1:seq_len(nrow(men_bwb))
+men_bwb$place_bwb <- seq_len(nrow(men_bwb))
 men_bwb <- dplyr::select(men_bwb, place_bwb, dplyr::everything()) 
 is_kwb <- stringr::str_extract(men_bwb$team, pattern = "[1-9][0-9]?") %in% 86:87
 men_bwb$place_kwb[is_kwb] <- seq_len(sum(is_kwb))
@@ -49,7 +49,7 @@ DT::datatable(men_bwb,
 # Women
 
 ```{r women}
-women <- teamstaffel::get_results("W")
+women <- teamstaffel::get_results("W", year = 2019)
 DT::datatable(women)
 
 ```
