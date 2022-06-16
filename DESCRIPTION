@@ -13,11 +13,11 @@ BugReports: https://github.com/KWB-R/teamstaffel/issues
 Imports: 
     dplyr,
     httr,
-    lubridate,
     magrittr,
     rvest,
     stringr,
-    tibble
+    tibble,
+    xml2
 Suggests: 
     covr,
     DT,

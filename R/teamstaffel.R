@@ -13,19 +13,19 @@ if(FALSE) {
 #' @return tibble with resuls
 #' @export
 #'
-#' @examples 
+#' @examples
 #' women <- get_results("W")
 #' women
-#' @importFrom dplyr bind_rows 
-get_results <- function(sex = "M", 
-                        year = 2022, 
+#' @importFrom dplyr bind_rows
+get_results <- function(sex = "M",
+                        year = 2022,
                     base_url = "https://berlin-wasserbetriebe.r.mikatiming.de") {
 
 
-url <- sprintf("%s/%s/?page=%d&event=ALL&num_results=100&pid=list&search[sex]=%s", 
-                 base_url, 
-                 year, 
-                 1, 
+url <- sprintf("%s/%s/?page=%d&event=ALL&num_results=100&pid=list&search[sex]=%s",
+                 base_url,
+                 year,
+                 1,
                  sex)
 
 number_of_pages <- ceiling(get_number_of_results(url)/100)
@@ -34,13 +34,13 @@ stopifnot(number_of_pages > 0)
 
 res_list <- lapply(seq_len(number_of_pages), function(page) {
 
-  url <- sprintf("%s/%s/?page=%d&event=ALL&num_results=100&pid=list&search[sex]=%s", 
-                 base_url, 
-                 year, 
-                 page, 
+  url <- sprintf("%s/%s/?page=%d&event=ALL&num_results=100&pid=list&search[sex]=%s",
+                 base_url,
+                 year,
+                 page,
                  sex)
 
-get_result(url) 
+get_result(url)
 
 })
 
@@ -49,9 +49,9 @@ dplyr::bind_rows(res_list)
 
 #' Get Result
 #'
-#' @param url 
+#' @param url url
 #'
-#' @return
+#' @return reults for one page (i.e. at maximum 100)
 #' @keywords internal
 #' @noMd
 #' @noRd
@@ -61,28 +61,30 @@ dplyr::bind_rows(res_list)
 #' @importFrom rvest html_nodes html_text
 #' @importFrom tibble tibble
 #' @importFrom stringr str_remove_all
-#' @importFrom lubridate hms
 get_result <- function(url) {
 
 resp <- httr::POST(url)
 url_exists <- identical(httr::status_code(resp), 200L)
-  
-  if(!url_exists) 
-    stop(sprintf("url '%s' not existing!", url))  
+
+  if(!url_exists)
+    stop(sprintf("url '%s' not existing!", url))
 
 
-tmp <- url %>%  
-  xml2::read_html() %>% 
-  rvest::html_nodes(".col-sm-12") %>% 
-  rvest::html_nodes(".list-group-item") 
+tmp <- url %>%
+  xml2::read_html() %>%
+  rvest::html_nodes(".col-sm-12") %>%
+  rvest::html_nodes(".list-group-item")
 tmp <- tmp[-1]
 
- 
 
-tibble::tibble(place = tmp %>% 
+
+tibble::tibble(place = tmp %>%
                  rvest::html_nodes(".place-primary") %>%
-                 rvest::html_text() %>% 
+                 rvest::html_text() %>%
                  as.integer(),
+               team = tmp %>%
+                 rvest::html_nodes(".type-fullname") %>%
+                 rvest::html_text(),
                start_number = tmp %>%
                  rvest::html_nodes(".type-field") %>%
                  rvest::html_text() %>%
@@ -98,25 +100,24 @@ tibble::tibble(place = tmp %>%
                finish_time = tmp %>%
                  rvest::html_nodes(".type-time") %>%
                  rvest::html_text() %>%
-                 stringr::str_remove_all("^Ziel") %>% 
-                 lubridate::hms()
+                 stringr::str_remove_all("^Ziel")
 )
 }
 
 #' Get Number of Results
 #'
-#' @param url url 
+#' @param url url
 #'
-#' @return
-#' @keyords internal
+#' @return number of results
+#' @keywords internal
 #' @noMd
 #' @noRd
 #' @importFrom stringr str_extract
 get_number_of_results <- function(url) {
-  url %>%  
-    xml2::read_html() %>% 
-    rvest::html_nodes(".list-info") %>% 
-    rvest::html_text() %>% 
-    stringr::str_extract(pattern = "[1-9][0-9]{0,6}") %>% 
+  url %>%
+    xml2::read_html() %>%
+    rvest::html_nodes(".list-info") %>%
+    rvest::html_text() %>%
+    stringr::str_extract(pattern = "[1-9][0-9]{0,6}") %>%
     as.integer()
 }

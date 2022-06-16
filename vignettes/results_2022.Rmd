@@ -1,7 +1,7 @@
 ---
 title: "Results 2022"
 author: "Michael Rustler"
-date: "`r Sys.date()`"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Results 2022}
@@ -14,15 +14,37 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
 ```
 
-# Men 
+# Men
 
-```{r men}
+## Men All
+
+```{r men_all}
 men <- teamstaffel::get_results("M")
-DT::datatable(men)
+DT::datatable(men,
+              rownames = FALSE)
 
 ```
+
+## Men BWB Only
+```{r men_bwb_only}
+is_bwb <- grepl(men$team, pattern = "Berliner\\s?Wasserbetriebe")
+men_bwb <- men[is_bwb, ] 
+men_bwb$place_bwb <- 1:seq_len(nrow(men_bwb))
+men_bwb <- dplyr::select(men_bwb, place_bwb, dplyr::everything()) 
+is_kwb <- stringr::str_extract(men_bwb$team, pattern = "[1-9][0-9]?") %in% c(89,91)
+men_bwb$place_kwb[is_kwb] <- seq_len(sum(is_kwb))
+men_bwb <- dplyr::select(men_bwb, place_kwb, dplyr::everything()) 
+
+DT::datatable(men_bwb,
+              options = list(pageLength = 100),
+              rownames = FALSE)
+
+```
+
+
 
 # Women
 
