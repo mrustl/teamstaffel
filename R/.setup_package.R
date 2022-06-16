@@ -16,7 +16,7 @@ kwb.pkgbuild::use_pkg(
 
 kwb.pkgbuild::use_ghactions()
 
-kwb.pkgbuild::create_empty_branch_ghpages("teamstaffel")
+kwb.pkgbuild::create_empty_branch_ghpages("teamstaffel", org = "mrustl")
 
 usethis::use_pipe()
 usethis::use_vignette("Results_2022")
