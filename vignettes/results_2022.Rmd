@@ -32,11 +32,11 @@ DT::datatable(men,
 ```{r men_bwb_only}
 is_bwb <- grepl(men$team, pattern = "Berliner\\s?Wasserbetriebe")
 men_bwb <- men[is_bwb, ] 
-men_bwb$place_bwb <- 1:seq_len(nrow(men_bwb))
-men_bwb <- dplyr::select(men_bwb, place_bwb, dplyr::everything()) 
+men_bwb$place_bwb <- seq_len(nrow(men_bwb))
+men_bwb <- dplyr::select(men_bwb, .data$place_bwb, dplyr::everything()) 
 is_kwb <- stringr::str_extract(men_bwb$team, pattern = "[1-9][0-9]?") %in% c(89,91)
 men_bwb$place_kwb[is_kwb] <- seq_len(sum(is_kwb))
-men_bwb <- dplyr::select(men_bwb, place_kwb, dplyr::everything()) 
+men_bwb <- dplyr::select(men_bwb, .data$place_kwb, dplyr::everything()) 
 
 DT::datatable(men_bwb,
               options = list(pageLength = 100),

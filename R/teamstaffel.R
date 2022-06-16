@@ -61,6 +61,7 @@ dplyr::bind_rows(res_list)
 #' @importFrom rvest html_nodes html_text
 #' @importFrom tibble tibble
 #' @importFrom stringr str_remove_all
+#' @importFrom rlang .data
 get_result <- function(url) {
 
 resp <- httr::POST(url)
