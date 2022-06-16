@@ -1,0 +1,10 @@
+pandoc: 2.7.3
+pkgdown: 2.0.4
+pkgdown_sha: ~
+articles:
+  results_2022: results_2022.html
+last_built: 2022-06-16T10:30Z
+urls:
+  reference: https://mrustl.de/teamstaffel/reference
+  article: https://mrustl.de/teamstaffel/articles
+
