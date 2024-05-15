@@ -8,8 +8,8 @@ Authors@R: c(
   )
 Description: R Package for Visualising Results from BWB Teamstaffel.
 License: MIT + file LICENSE
-URL: https://github.com/KWB-R/teamstaffel
-BugReports: https://github.com/KWB-R/teamstaffel/issues
+URL: https://github.com/mrustl/teamstaffel
+BugReports: https://github.com/mrustl/teamstaffel/issues
 Imports: 
     dplyr,
     httr,
