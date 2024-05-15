@@ -7,6 +7,7 @@
 get_results(
   sex = "M",
   year = 2022,
+  event = "ALL",
   base_url = "https://berlin-wasserbetriebe.r.mikatiming.de"
 )
 }
@@ -15,10 +16,13 @@ get_results(
 
 \item{year}{default: 2022}
 
+\item{event}{return overall results ("ALL") or of a selected starting day (i.e.
+"ST1", "ST2" or "ST3"), (default: "ALL")}
+
 \item{base_url}{default: "https://berlin-wasserbetriebe.r.mikatiming.de"}
 }
 \value{
-tibble with resuls
+tibble with results
 }
 \description{
 Get Teamstaffel Results Table

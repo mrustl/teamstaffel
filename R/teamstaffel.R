@@ -8,9 +8,11 @@ if(FALSE) {
 #'
 #' @param sex either "M" for men or "W" for women default: "M"
 #' @param year default: 2022
+#' @param event return overall results ("ALL") or of a selected starting day (i.e.
+#' "ST1", "ST2" or "ST3"), (default: "ALL")
 #' @param base_url default: "https://berlin-wasserbetriebe.r.mikatiming.de"
 #'
-#' @return tibble with resuls
+#' @return tibble with results
 #' @export
 #'
 #' @examples
@@ -19,14 +21,18 @@ if(FALSE) {
 #' @importFrom dplyr bind_rows
 get_results <- function(sex = "M",
                         year = 2022,
+                        event = "ALL",
                     base_url = "https://berlin-wasserbetriebe.r.mikatiming.de") {
 
 
-url <- sprintf("%s/%s/?page=%d&event=ALL&num_results=100&pid=list&search[sex]=%s",
-                 base_url,
-                 year,
-                 1,
-                 sex)
+stopifnot(event %in% c("ALL", paste0("ST", 1:3)))
+
+url <- sprintf("%s/%s/?page=%d&event=%s&num_results=100&pid=list&search[sex]=%s",
+               base_url,
+               year,
+               1,
+               event,
+               sex)
 
 number_of_pages <- ceiling(get_number_of_results(url)/100)
 stopifnot(number_of_pages > 0)
@@ -34,10 +40,11 @@ stopifnot(number_of_pages > 0)
 
 res_list <- lapply(seq_len(number_of_pages), function(page) {
 
-  url <- sprintf("%s/%s/?page=%d&event=ALL&num_results=100&pid=list&search[sex]=%s",
+  url <- sprintf("%s/%s/?page=%d&event=%s&num_results=100&pid=list&search[sex]=%s",
                  base_url,
                  year,
                  page,
+                 event,
                  sex)
 
 get_result(url)
@@ -64,6 +71,7 @@ dplyr::bind_rows(res_list)
 #' @importFrom rlang .data
 get_result <- function(url) {
 
+
 resp <- httr::POST(url)
 url_exists <- identical(httr::status_code(resp), 200L)
 
@@ -73,13 +81,16 @@ url_exists <- identical(httr::status_code(resp), 200L)
 
 tmp <- url %>%
   xml2::read_html() %>%
-  rvest::html_nodes(".col-sm-12") %>%
+  rvest::html_nodes(".col-sm-12")
+
+
+tmp <- url %>%
+  xml2::read_html() %>%
+  rvest::html_nodes(".col-sm-12.row-xs") %>%
   rvest::html_nodes(".list-group-item")
 tmp <- tmp[-1]
 
-
-
-tibble::tibble(place = tmp %>%
+res <- tibble::tibble(place = tmp %>%
                  rvest::html_nodes(".place-primary") %>%
                  rvest::html_text() %>%
                  as.integer(),
@@ -94,15 +105,24 @@ tibble::tibble(place = tmp %>%
                  rvest::html_nodes(".type-age_class") %>%
                  rvest::html_text() %>%
                  stringr::str_remove_all("^AK"),
-               event_name = tmp %>%
-                 rvest::html_nodes(".type-event_name") %>%
-                 rvest::html_text() %>%
-                 stringr::str_remove_all("^Wettbewerb"),
                finish_time = tmp %>%
                  rvest::html_nodes(".type-time") %>%
                  rvest::html_text() %>%
                  stringr::str_remove_all("^Ziel")
-)
+               )
+
+is_overall_result <- grepl("ALL", url)
+
+if(is_overall_result) {
+res <- dplyr::bind_cols(res,
+                        tibble::tibble(event_name = tmp %>%
+                                         rvest::html_nodes(".type-event_name") %>%
+                                         rvest::html_text() %>%
+                                         stringr::str_remove_all("^Wettbewerb")
+                        ))
+}
+
+res
 }
 
 #' Get Number of Results

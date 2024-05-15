@@ -1,0 +1,72 @@
+---
+title: "Results 2023"
+author: "Michael Rustler"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Results 2023}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+```
+
+# Men
+
+## Men All
+
+```{r men_all}
+men <- teamstaffel::get_results("M", 
+                                year = 2023,
+                                event = "ALL")
+
+DT::datatable(men,
+              rownames = FALSE)
+
+```
+
+## Men BWB Only
+```{r men_bwb_only}
+is_bwb <- grepl(men$team, pattern = "Berliner\\s?Wasserbetriebe")
+men_bwb <- men[is_bwb, ] 
+men_bwb$place_bwb <- seq_len(nrow(men_bwb))
+men_bwb <- dplyr::select(men_bwb, "place_bwb", dplyr::everything())
+is_kwb <- stringr::str_extract(men_bwb$team, pattern = "[1-9][1-9]?[0-9]?") %in% 115:116
+men_bwb[["place_kwb"]][is_kwb] <- seq_len(sum(is_kwb))
+men_bwb <- dplyr::select(men_bwb, "place_kwb", dplyr::everything()) 
+
+DT::datatable(men_bwb,
+              options = list(pageLength = 100),
+              rownames = FALSE)
+
+```
+
+
+
+# Women
+
+```{r women}
+women <- teamstaffel::get_results("W", year = 2023, event = "ALL")
+DT::datatable(women)
+
+```
+
+
+## Women BWB Only
+```{r women_bwb_only}
+is_bwb <- grepl(women$team, pattern = "Berliner\\s?Wasserbetriebe")
+women_bwb <- women[is_bwb, ] 
+women_bwb$place_bwb <- seq_len(nrow(women_bwb))
+women_bwb <- dplyr::select(women_bwb, "place_bwb", dplyr::everything())
+
+DT::datatable(women_bwb,
+              options = list(pageLength = 100),
+              rownames = FALSE)
+
+```
