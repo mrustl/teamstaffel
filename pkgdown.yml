@@ -1,13 +1,13 @@
 pandoc: 3.1.11
-pkgdown: 2.0.9
+pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   results_2019: results_2019.html
   results_2022: results_2022.html
   results_2023: results_2023.html
   results_2024: results_2024.html
-last_built: 2024-05-15T11:05Z
+  results_2025: results_2025.html
+last_built: 2025-06-04T09:29Z
 urls:
   reference: https://mrustl.de/teamstaffel/reference
   article: https://mrustl.de/teamstaffel/articles
-
