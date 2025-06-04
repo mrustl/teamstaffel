@@ -48,6 +48,51 @@ DT::datatable(men_bwb,
 ```
 
 
+### Statistics
+
+```{r men_bwb_only_stats}
+is_kwb <- stringr::str_starts(men$team, pattern = "Berliner.*Wasser") & stringr::str_extract(men$team, pattern = "[0-9][0-9]?[0-9]?") %in% c(99:101,103)
+men[["place_kwb"]][is_kwb] <- seq_len(sum(is_kwb))
+men[["kwb_team"]][is_kwb] <- sprintf("KWB%d", seq_len(sum(is_kwb)))
+
+men$time_minutes <- as.numeric(lubridate::seconds(lubridate::hms(men$finish_time))/60)
+
+ecdf_function <- ecdf(men$time_minutes)
+
+men_is_kwb <- men[is_kwb,]
+men_is_kwb$percentile <- ecdf_function(men_is_kwb$time_minutes)*100
+
+density_minutes <- density(men$time_minutes)
+
+
+plot(density_minutes, 
+     xlab = "Time (minutes)",
+     main = "")
+abline(v = men_is_kwb$time_minutes,  col = "blue")
+text(x = men_is_kwb$time_minutes*0.99,
+     labels = sprintf("%s (%03.1f %%)", men_is_kwb$kwb_team, men_is_kwb$percentile),
+     y = 0.75* max(density_minutes$y),
+     srt = 90,
+     col = "blue")
+     
+
+plot(x = men$time_minutes, 
+     y = men$place,
+     xlab = "Time (minutes)",
+     ylab = "Place",
+     main = "", 
+     type = "l",
+     las = 1)
+abline(v = men_is_kwb$time_minutes,  col = "blue")
+text(x = men_is_kwb$time_minutes*0.99,
+     labels = sprintf("%s (%03.1f %%)", men_is_kwb$kwb_team, men_is_kwb$percentile),
+     y = median(men_is_kwb$place),
+     srt = 90,
+     col = "blue")
+     
+```
+
+
 
 # Women Starting Day 1
 
